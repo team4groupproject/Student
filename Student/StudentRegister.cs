@@ -1,0 +1,127 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Configuration;
+using System.Data.SqlClient;
+
+
+namespace Student
+{
+    public partial class StudentRegister : Form
+    {
+        string connectionString;
+        SqlConnection conn;
+        int studentID;
+        int seatsFilled;
+
+        //constructor accepts StudentID from previous form
+        public StudentRegister(int stuID)
+        {
+            //share the studentID to public variable passed to all the methods
+            studentID = stuID;
+            InitializeComponent();
+            connectionString = ConfigurationManager.ConnectionStrings["Student.Properties.Settings.TinyCollegeDB1ConnectionString"].ConnectionString;
+        }
+
+        private void StudentRegister_Load(object sender, EventArgs e)
+        {
+            //display student id for student who will be registered (value was passed from previous form)
+            txtStudentID.Text = studentID.ToString();
+
+            using (conn = new SqlConnection(connectionString))
+            using (SqlCommand comd = new SqlCommand("SELECT courseName, courseId FROM course", conn))
+            using (SqlDataAdapter adapterCourse = new SqlDataAdapter(comd))
+            {
+                //create a datatable in working memory for retrieved data
+                DataTable CourseTable = new DataTable();
+                //use SQLscript to retrieve and fill data table
+                adapterCourse.Fill(CourseTable);
+                //show course name in combobox
+                cboCourse.DisplayMember = "courseName";
+                //use id behind selection in combobox
+                cboCourse.ValueMember = "courseId";
+                cboCourse.DataSource = CourseTable;
+            }
+        }
+
+        private void cboCourse_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            using (conn = new SqlConnection(connectionString))
+            //show only sessions for selected course. (retrieve max seats of course for calculating remainingSeats)
+            using (SqlCommand comd = new SqlCommand("SELECT session.courseId, session.sessionId, session.sessionSeatsFilled, course.courseMaxNumSeats " +
+                "FROM session " +
+                "INNER JOIN course ON session.courseId=course.courseId " +
+                "WHERE session.courseId = @CourseID", conn))
+            using (SqlDataAdapter adapterSession = new SqlDataAdapter(comd))
+            {
+                //Set courseID in comd to be the value of selected in course combobox
+                comd.Parameters.AddWithValue("@CourseID", cboCourse.SelectedValue);
+
+                //create a datatable in working memory for retrieved data
+                DataTable SessionTable = new DataTable();
+                //use SQLscript to retrieve and fill data table
+                adapterSession.Fill(SessionTable);
+                //show sessionid in combobox
+                cboSession.DisplayMember = "sessionId";
+                //use id for value
+                cboSession.ValueMember = "sessionId";
+                cboSession.DataSource = SessionTable;
+
+                //calculate and show remaining seats
+                DataRow dr = SessionTable.Rows[0];
+                int maxSeats = int.Parse(dr["courseMaxNumSeats"].ToString());
+                seatsFilled = int.Parse(dr["sessionSeatsFilled"].ToString());
+                int remainingSeats = maxSeats-seatsFilled;
+                txtSeatsRemaining.Text = remainingSeats.ToString();
+            }
+        }
+
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            using (conn = new SqlConnection(connectionString))
+            using (SqlCommand comd = new SqlCommand("INSERT INTO registration (sessionId, studentId) " +
+                "VALUES (@sessionId, @studentId)" //+
+                //"; INSERT INTO session (sessionSeatsFilled) VALUES (@seatsFilled)"
+                , conn))
+            {
+                conn.Open();
+                comd.Parameters.AddWithValue("@sessionId", cboSession.Text);
+                comd.Parameters.AddWithValue("@studentId", studentID);
+                //comd.Parameters.AddWithValue("@seatsFilled", seatsFilled + 1);
+                comd.ExecuteScalar();
+
+                using (SqlCommand comd2 = new SqlCommand("INSERT INTO session (sessionSeatsFilled) VALUES (@seatsFilled)", conn))
+                {
+                    comd.Parameters.AddWithValue("@seatsFilled", seatsFilled + 1);
+                    comd.ExecuteScalar();
+                }
+
+
+                    MessageBox.Show("Registered for session");
+            }
+
+            //******** I can't figure out how to run two insert commands in one click**************
+            //update seats filled to one higher
+            //using (SqlCommand comdSeats = new SqlCommand("INSERT INTO session (sessionSeatsFilled) VALUES (@seatsFilled)", conn))
+            //{
+            //  conn.Open();
+            //add one to public variable seatsfilled- set in course cbo index change method
+            //comdSeats.Parameters.AddWithValue("@seatsFilled", seatsFilled + 1);
+            //comdSeats.ExecuteScalar();
+            // }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+    }
+}
+
