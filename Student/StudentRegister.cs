@@ -19,6 +19,7 @@ namespace Student
         SqlConnection conn;
         int studentID;
         int seatsFilled;
+        int remainingSeats;
 
         //constructor accepts StudentID from previous form
         public StudentRegister(int stuID)
@@ -77,8 +78,15 @@ namespace Student
                 DataRow dr = SessionTable.Rows[0];
                 int maxSeats = int.Parse(dr["courseMaxNumSeats"].ToString());
                 seatsFilled = int.Parse(dr["sessionSeatsFilled"].ToString());
-                int remainingSeats = maxSeats-seatsFilled;
+                remainingSeats = maxSeats-seatsFilled;
                 txtSeatsRemaining.Text = remainingSeats.ToString();
+                //make button available only if seats remain in this session
+                if (remainingSeats > 0)
+                {
+                    btnRegister.Enabled = true;
+                }
+                else
+                { btnRegister.Enabled = false; }
             }
         }
 
