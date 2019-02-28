@@ -54,7 +54,7 @@ namespace Student
                     dgvCourses.DataSource = studentBindingSource;
                     //select the data needed for datagrid and to calculate credits completed                
                     //************ Add grades from registration table*********************
-                    using (SqlCommand command =new SqlCommand ("SELECT course.courseName, course.courseCreditHours FROM registration " +
+                    using (SqlCommand command =new SqlCommand ("SELECT course.courseName, course.courseCreditHours, registration.grade AS Grade FROM registration " +
                         "INNER JOIN session ON registration.sessionId = session.sessionId " +
                         "INNER JOIN course ON session.courseId = course.courseId " +
                         "WHERE registration.studentID=@studentID", conn))

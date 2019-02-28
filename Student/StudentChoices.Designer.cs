@@ -30,9 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.btnExit = new System.Windows.Forms.Button();
-            this.tinyCollegeDB1DataSet = new Student.TinyCollegeDB1DataSet();
+            this.tinyCollegeDB1DataSet = new Student.TinyCollegeDBDataSet();
             this.courseBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.courseTableAdapter = new Student.TinyCollegeDB1DataSetTableAdapters.courseTableAdapter();
+            this.courseTableAdapter = new Student.TinyCollegeDBDataSetTableAdapters.courseTableAdapter();
             this.btnRegister = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtStudentID = new System.Windows.Forms.TextBox();
@@ -46,8 +46,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtLastNameStudent = new System.Windows.Forms.TextBox();
             this.txtFirstNameStudent = new System.Windows.Forms.TextBox();
-            this.sessionTableAdapter = new Student.TinyCollegeDB1DataSetTableAdapters.sessionTableAdapter();
-            this.registrationTableAdapter = new Student.TinyCollegeDB1DataSetTableAdapters.registrationTableAdapter();
+            this.sessionTableAdapter = new Student.TinyCollegeDBDataSetTableAdapters.sessionTableAdapter();
+            this.registrationTableAdapter = new Student.TinyCollegeDBDataSetTableAdapters.registrationTableAdapter();
             this.fksessioncourseBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.fkregistrationsessionBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tinyCollegeDB1DataSet)).BeginInit();
@@ -241,7 +241,7 @@
             this.Controls.Add(this.btnFindStudentID);
             this.Controls.Add(this.btnExit);
             this.Name = "StudentChoices";
-            this.Text = "Form1";
+            this.Text = "For Students";
             this.Load += new System.EventHandler(this.StudentChoices_Load);
             ((System.ComponentModel.ISupportInitialize)(this.tinyCollegeDB1DataSet)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.courseBindingSource)).EndInit();
@@ -258,9 +258,9 @@
 
         #endregion
         private System.Windows.Forms.Button btnExit;
-        private TinyCollegeDB1DataSet tinyCollegeDB1DataSet;
+        private TinyCollegeDBDataSet tinyCollegeDB1DataSet;
         private System.Windows.Forms.BindingSource courseBindingSource;
-        private TinyCollegeDB1DataSetTableAdapters.courseTableAdapter courseTableAdapter;
+        private TinyCollegeDBDataSetTableAdapters.courseTableAdapter courseTableAdapter;
         private System.Windows.Forms.Button btnRegister;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtStudentID;
@@ -274,10 +274,10 @@
         private System.Windows.Forms.TextBox txtFirstNameStudent;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.BindingSource fksessioncourseBindingSource;
-        private TinyCollegeDB1DataSetTableAdapters.sessionTableAdapter sessionTableAdapter;
+        private TinyCollegeDBDataSetTableAdapters.sessionTableAdapter sessionTableAdapter;
         private System.Windows.Forms.DataGridView dgvCourses;
         private System.Windows.Forms.BindingSource fkregistrationsessionBindingSource;
-        private TinyCollegeDB1DataSetTableAdapters.registrationTableAdapter registrationTableAdapter;
+        private TinyCollegeDBDataSetTableAdapters.registrationTableAdapter registrationTableAdapter;
     }
 }
 
