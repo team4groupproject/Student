@@ -74,9 +74,15 @@ namespace Student
                         for (int x =0; x < registrationTable.Rows.Count; x++)
                         {
                             DataRow currentRow = registrationTable.Rows[x];
-                            creditsEarned = creditsEarned + int.Parse(currentRow["courseCreditHours"].ToString());
+                            //char grade = char.Parse(currentRow["grade"].ToString());
+                            //if(grade == 'A' || grade == 'B' || grade == 'C')
+                            //{
+                                creditsEarned = creditsEarned + int.Parse(currentRow["courseCreditHours"].ToString());
+                            //}
                         }
                         txtEarnedCredits.Text = creditsEarned.ToString();
+                        if (creditsEarned>120)
+                        { MessageBox.Show("Congradulations, you have graduated from Tiny College"); }//show feedback if student has graduated
                     }
 
                     //enable register button if student found
