@@ -18,6 +18,7 @@ namespace Student
         string connectionString;
         SqlConnection conn;
         int studentID;
+        int sessionID;
         int seatsFilled;
         int remainingSeats;
 
@@ -80,6 +81,9 @@ namespace Student
                 seatsFilled = int.Parse(dr["sessionSeatsFilled"].ToString());
                 remainingSeats = maxSeats-seatsFilled;
                 txtSeatsRemaining.Text = remainingSeats.ToString();
+                //set public varialbe session ID (will be updating that table in registration method)
+                sessionID = int.Parse(dr["sessionId"].ToString());
+
                 //make button available only if seats remain in this session
                 if (remainingSeats > 0)
                 {
@@ -95,35 +99,28 @@ namespace Student
         {
             using (conn = new SqlConnection(connectionString))
             using (SqlCommand comd = new SqlCommand("INSERT INTO registration (sessionId, studentId) " +
-                "VALUES (@sessionId, @studentId)" //+
-                //"; INSERT INTO session (sessionSeatsFilled) VALUES (@seatsFilled)"
-                , conn))
+                "VALUES (@sessionId, @studentId)", conn))
             {
                 conn.Open();
                 comd.Parameters.AddWithValue("@sessionId", cboSession.Text);
                 comd.Parameters.AddWithValue("@studentId", studentID);
-                //comd.Parameters.AddWithValue("@seatsFilled", seatsFilled + 1);
                 comd.ExecuteScalar();
-
-                using (SqlCommand comd2 = new SqlCommand("INSERT INTO session (sessionSeatsFilled) VALUES (@seatsFilled)", conn))
-                {
-                    comd.Parameters.AddWithValue("@seatsFilled", seatsFilled + 1);
-                    comd.ExecuteScalar();
-                }
-
-
-                    MessageBox.Show("Registered for session");
+                conn.Close();
             }
 
-            //******** I can't figure out how to run two insert commands in one click**************
             //update seats filled to one higher
-            //using (SqlCommand comdSeats = new SqlCommand("INSERT INTO session (sessionSeatsFilled) VALUES (@seatsFilled)", conn))
-            //{
-            //  conn.Open();
-            //add one to public variable seatsfilled- set in course cbo index change method
-            //comdSeats.Parameters.AddWithValue("@seatsFilled", seatsFilled + 1);
-            //comdSeats.ExecuteScalar();
-            // }
+            using (conn = new SqlConnection(connectionString))
+            using (SqlCommand comdSeats = new SqlCommand("UPDATE session SET sessionSeatsFilled = @seatsFilled WHERE sessionId = @sessionId", conn))
+            {
+              conn.Open();
+            //add 1 to public variable seatsfilled- set in course cbo index change method
+            comdSeats.Parameters.AddWithValue("@seatsFilled", seatsFilled + 1);
+            comdSeats.Parameters.AddWithValue("@sessionId", sessionID);
+            comdSeats.ExecuteScalar();
+            }
+            MessageBox.Show("Registered for session");
+
+
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
